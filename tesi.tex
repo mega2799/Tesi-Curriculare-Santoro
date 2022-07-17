@@ -64,18 +64,20 @@
 
 
 %%% Matematica
-%\usepackage{amsmath}
-%% non bisogna assolutamente invocare il pacchetto amssymb
-%\usepackage[%
-%  math-style=ISO              % per scrivere la matematica delle scienze sperimentali bisogna seguire le norme ISO
-%]{unicode-math}                 % implementazione di glifi Unicode per caratteri matematici
-%\setmathfont[%
-%  Ligatures=TeX               % abilita legature classiche di LaTeX
+\usepackage{amsmath}
+% non bisogna assolutamente invocare il pacchetto amssymb
+\usepackage[
+ math-style=ISO              % per scrivere la matematica delle scienze sperimentali bisogna seguire le norme ISO
+]{unicode-math}                 % implementazione di glifi Unicode per caratteri matematici
+
+%\setmathfont[
+% Ligatures=TeX               % abilita legature classiche di LaTeX
 %]{Latin Modern Math}
-%\usepackage[%
-%  output-decimal-marker={,},  % le convenzioni tipografiche italiane prevedono la virgola e non il punto
-%  binary-units                % abilita le espressioni per bit e byte
-%]{siunitx}                      % permette di definire numeri con unità di misura
+
+\usepackage[
+ output-decimal-marker={,},  % le convenzioni tipografiche italiane prevedono la virgola e non il punto
+ binary-units                % abilita le espressioni per bit e byte
+]{siunitx}                      % permette di definire numeri con unità di misura
 
 %% Lingue
 \usepackage[%

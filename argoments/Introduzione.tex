@@ -9,11 +9,29 @@ In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque qua
 
 
 \section{Il nostro caso di studio}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et ex vehicula, interdum mi eu, auctor augue. Suspendisse vel sagittis urna. In vitae ligula ipsum. Vivamus mattis neque efficitur, gravida purus facilisis, rhoncus felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc bibendum urna porta quam congue ornare. Fusce eget consequat libero. Donec varius justo vel libero malesuada, sit amet dignissim ex tincidunt. In pharetra vestibulum lacus quis laoreet. Donec vel laoreet ex, sed facilisis massa. Mauris commodo velit est. Maecenas non sem elementum, faucibus velit et, bibendum mi. Integer laoreet ex et eros accumsan, nec dapibus nisi vestibulum. Donec sed nunc quis mi gravida congue non vel tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus.
 
-Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales neque tristique rutrum. Vivamus et ex dolor. Vestibulum lacinia augue sit amet libero mattis pellentesque. In sed congue ante, quis tempus neque. Vestibulum semper eu sapien et vestibulum.
+Durante la progettazione si e' deciso di utilizzare una relazione per poter testare i diversi metodi di collezione dei dati.
+La relazione e' formata da 2 entita' A e B,in un esempio di un social network l'entita' A sono i Post e l'entita' B i Commenti sotto ogni post, collegate da una relazione 1..N,
+per ogni A esistono 10 B relativi, ogni Post contiene 10 Commenti.
 
-In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
+La modellazione delle entita' e' stata fatta creando 2 triplette di attributi uguali, sulla seconda tripletta al contrario della prima sono stati costruiti degli indici su ogni attributo,
+questi attributi generici hanno una propria selettivita':
+
+    \begin{equation*}
+        \left.\begin{aligned}
+         sel(Att1, Att4) &= \frac{1}{10}    \\
+         sel(Att2, Att5) &= \frac{1}{10.000} \\
+         sel(Att2, Att6) &= \frac{1}{100}
+        \end{aligned}
+        \right\}
+        \qquad 
+        \end{equation*}
+
+Il numero di Entita' A e' di $10^5$ e di conseguenza ci sono $10^6$ entita' B.
+
+\begin{center}
+    \includegraphics[scale=0.6]{Caso Studio.png}
+\end{center}
 
 
 \section{Modellazione dei dati}
@@ -24,18 +42,17 @@ Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales
 In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
 
 \begin{center}
-    \includegraphics[scale=0.8]{refAB.png}
+    \includegraphics[scale=0.6]{refAB.png}
 \end{center}
 
 \begin{center}
-    \includegraphics[scale=0.8]{refBA.png}
+    \includegraphics[scale=0.6]{refBA.png}
 \end{center}
 
 \begin{center}
-    \includegraphics[scale=0.8]{embAB.png}
+    \includegraphics[scale=0.6]{embAB.png}
 \end{center}
 
-
 \begin{center}
-    \includegraphics[scale=0.8]{embBA.png}
+    \includegraphics[scale=0.6]{embBA.png}
 \end{center}
