@@ -1,8 +1,186 @@
 \chapter{MongoDb}
 
-\section{Raccolta dati}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et ex vehicula, interdum mi eu, auctor augue. Suspendisse vel sagittis urna. In vitae ligula ipsum. Vivamus mattis neque efficitur, gravida purus facilisis, rhoncus felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc bibendum urna porta quam congue ornare. Fusce eget consequat libero. Donec varius justo vel libero malesuada, sit amet dignissim ex tincidunt. In pharetra vestibulum lacus quis laoreet. Donec vel laoreet ex, sed facilisis massa. Mauris commodo velit est. Maecenas non sem elementum, faucibus velit et, bibendum mi. Integer laoreet ex et eros accumsan, nec dapibus nisi vestibulum. Donec sed nunc quis mi gravida congue non vel tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+\section{Caratteristiche}
 
-Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales neque tristique rutrum. Vivamus et ex dolor. Vestibulum lacinia augue sit amet libero mattis pellentesque. In sed congue ante, quis tempus neque. Vestibulum semper eu sapien et vestibulum.
+MongoDb e' uno dei piu' diffusi database non relazionali orientato ai documenti, di tipo NoSQL,  utilizza documenti in un formato JSON al posto delle tipiche tabelle 
+dei sistemi relazionali. Piu' precisamente MongoDb utilizza i BSON ossia JSON binari per rappresentare strutture dati semplici e array associativi (oggetti in MongoDb),
+un BSON contiene una lista ordinata di elementi appartenenti ai seguenti tipi:
 
-In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
+\begin{list}{}{}
+    \item stringhe
+    \item interi (32 o 64 bit)
+    \item double (numeri a virgola mobile a 64 bit, standard IEEE 754)
+    \item date (numeri interi in millisecondi dal'epoca Unix come riferimento, 1º gennaio 1970)
+    \item byte array (dati binari)
+    \item booleani (true e false)
+    \item NULL
+    \item oggetto BSON
+    \item array BSON
+    \item espressioni regolari
+    \item codice JavaScript
+\end{list}
+
+\section{Organizzazione dei dati}
+
+\subsection{Creazione collezioni}
+
+Per poter originare i set di dati sui quali lavoriamo siamo partiti da 2 enormi file JSON generati al paragrafo ??????????? //TODO riguarda qua //
+contenenti POST (A) e COMMENTI(B). Il paramentro $out posto dopo la query ha creato una collezione a tuttli gli effetti sulla quale poter eseguire le query
+all'interno della rete del container.
+
+\subsubsection{Referencing}
+
+Il referencing di A in B si ottiene facilmente proiettando gli attributi della collezione B, dato che contiene al suo interno la foreign Key di A.
+
+\begin{verbatim}
+db.B.aggregate([
+  {
+    $project: {
+      "_id" : "$BK",
+      "BK" : "$BK",
+      "AK" : "$FAK",
+      "B1" : "$B1",   
+      "B2" : "$B2",
+      "B3" : "$B3",
+      "B4" : "$B4",
+      "B5" : "$B5",
+      "B6" : "$B6",
+      "B7" : "$B7"
+    }
+  },{
+  $out : "referencing_A_in_B"
+}
+])
+\end{verbatim}
+
+Il referencing di B in A invece richiede un join, un' operazione piu' onorosa per la quale ho dovuto passare il parametro allowDiskUse=true per poter utilizzare
+a pieno la memoria della macchina e quindi eseguire il join trovando di fatto le chiavi e aggiungendole all'array B che arrivera' a contenere 10 chivi BK per ogni 
+AK dato che il rapporto e' di 1:10. 
+
+\begin{verbatim}
+    
+db.B.aggregate(
+[
+   {
+      $group: {
+        _id: {"AK" : "$FAK"}, "BK": {$addToSet : "$BK"}
+      }
+    },
+    {
+      $lookup: {
+        from: 'Ap',
+        localField: '_id.AK',
+        foreignField: 'AK',
+        as: 'AK'
+      }
+    },{
+      $project : {"_id" : 0,"BK.FAK" : 0}
+    },{
+    $unwind: {
+      path: "$AK",
+    }},{
+      $project : {
+      "_id" : "$AK.AK",
+      "AK" : "$AK.AK",
+      "A1" : "$AK.A1", 
+      "A2" : "$AK.A2", 
+      "A3" : "$AK.A3", 
+      "A4" : "$AK.A4",
+      "A5" : "$AK.A5",
+      "A6" : "$AK.A6",
+      "A7" : "$AK.A7",
+       "B" : "$BK"} 
+    },{
+      $out : "referencing_B_in_A"
+    }
+  ],{allowDiskUse:true}
+)
+\end{verbatim}
+
+\subsubsection{Embedding}
+Per l'embedding di documenti ho dovuto sempre eseguire dei join ma e' stato fondamentale poter aggiungere un intero documento all'interno di un'array tramite il parametro
+$$ROOT che ha permesso un operazione molto piu'veloce e compatta.
+
+Embedding di A in B 
+
+\begin{verbatim}
+db.B.aggregate(
+  [
+    {
+      $lookup: {
+        from: 'A',
+        localField: 'FAK',
+        foreignField: 'AK',
+        as: 'A'
+      }
+    }
+   ,{
+     $project: {
+       "FAK" : 0,
+       "_id" : 0,
+       "A._id" : 0
+     }
+   }
+  ,{
+    $project : {
+      "_id" : "$BK",
+      "B1" : 1,
+      "B2" : 1,
+      "B3" : 1,
+      "B4" : 1,
+      "B5" : 1,
+      "B6" : 1,
+      "B7" : 1,
+      "A" : 1
+    }
+  }
+  ,{
+     $out : "embedding_A_in_B"
+   }
+  ]
+)    
+\end{verbatim}
+
+Embedding di B in A
+
+\begin{verbatim}
+    db.B.aggregate(
+  [
+   {
+      $group: {
+        _id: {"AK" : "$FAK"}, "BK": {$addToSet : "$$ROOT"}
+      }
+    },
+    {
+      $lookup: {
+        from: 'A',
+        localField: '_id.AK',
+        foreignField: 'AK',
+        as: 'AK'
+      }
+    },{
+      $project : {"_id" : 0,"BK.FAK" : 0}
+    },{
+    $unwind: {
+      path: "$AK",
+    }},{
+      $project : {
+        "_id" : "$AK.AK",
+        "AK" : "$AK.AK", 
+        "A1" : "$AK.A1", 
+        "A2" : "$AK.A2", 
+        "A3" : "$AK.A3", 
+        "A4" : "$AK.A4",
+        "A5" : "$AK.A5",
+        "A6" : "$AK.A6",
+        "A7" : "$AK.A7",
+        "B" : "$BK"} 
+    },{
+        $project : { "A._id" : 0, "B._id" : 0}
+    },{
+        $out : "embedding_B_in_A"
+   }
+  ],{allowDiskUse:true}
+)
+\end{verbatim}
+\subsection{Indici}
