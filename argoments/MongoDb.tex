@@ -6,7 +6,7 @@ MongoDb e' uno dei piu' diffusi database non relazionali orientato ai documenti,
 dei sistemi relazionali. Piu' precisamente MongoDb utilizza i BSON ossia JSON binari per rappresentare strutture dati semplici e array associativi (oggetti in MongoDb),
 un BSON contiene una lista ordinata di elementi appartenenti ai seguenti tipi:
 
-\begin{list}{}{}
+\begin{itemize}{}{}
     \item stringhe
     \item interi (32 o 64 bit)
     \item double (numeri a virgola mobile a 64 bit, standard IEEE 754)
@@ -18,7 +18,7 @@ un BSON contiene una lista ordinata di elementi appartenenti ai seguenti tipi:
     \item array BSON
     \item espressioni regolari
     \item codice JavaScript
-\end{list}
+\end{itemize}
 
 \section{Organizzazione dei dati}
 
@@ -31,6 +31,8 @@ all'interno della rete del container.
 \subsubsection{Referencing}
 
 Il referencing di A in B si ottiene facilmente proiettando gli attributi della collezione B, dato che contiene al suo interno la foreign Key di A.
+
+\subsubsection{Referencing di A in B}
 
 \begin{verbatim}
 db.B.aggregate([
@@ -56,6 +58,8 @@ db.B.aggregate([
 Il referencing di B in A invece richiede un join, un' operazione piu' onerosa per la quale ho dovuto passare il parametro allowDiskUse=true per poter utilizzare
 a pieno la memoria della macchina e quindi eseguire il join trovando di fatto le chiavi e aggiungendole all'array B che arrivera' a contenere 10 chivi BK per ogni 
 AK dato che il rapporto e' di 1:10. 
+
+\subsubsection{Referencing di B in A}
 
 \begin{verbatim}
     
@@ -101,7 +105,8 @@ db.B.aggregate(
 Per l'embedding di documenti ho dovuto sempre eseguire dei join ma e' stato fondamentale poter aggiungere un intero documento all'interno di un'array tramite il parametro
 \verb|$$ROOT| che ha permesso un operazione molto piu'veloce e compatta.
 
-Embedding di A in B 
+\subsubsection{Embedding di A in B}
+ 
 
 \begin{verbatim}
 db.B.aggregate(
@@ -141,7 +146,7 @@ db.B.aggregate(
 )    
 \end{verbatim}
 
-Embedding di B in A
+\subsubsection{Embedding di B in A}
 
 \begin{verbatim}
     db.B.aggregate(
@@ -189,7 +194,11 @@ Embedding di B in A
 Gli indici per gli attributi sono stati creati attraverso uno script in JS che viene eseguito durante la creazione del container.
 
 MongoDB utilizza, se non esplicitamente indicato, come strutture dati per gli indici dei B-tree. Dato che abbiamo scelto di adoperare l'embedding di interi documenti sono stati 
-indicizzati anche gli attributi dei documenti "interni" sui quali saranno esegeuite delle query, anche sulle foreign del referencing sono stati costruiti indici.
+indicizzati anche gli attributi dei documenti "innestati" sui quali saranno esegeuite delle query, anche sulle foreign del referencing sono stati costruiti indici.
+
+\begin{center}
+  \includegraphics{../code/makeIndexes.png}
+\end{center}
 
 \begin{lstlisting}[caption=making indexes, style=customJs]
 // indexes
