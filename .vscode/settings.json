@@ -14,6 +14,12 @@
       "tools": [
         "arara"
       ]
+    },
+    {
+      "name": "mega",
+      "tools": [
+         "luatex"
+      ]
     }
   ],
   "latex-workshop.latex.tools": [
@@ -27,6 +33,48 @@
         "%DOCFILE%"
       ],
       "env": {}
+    },
+    {
+        "name": "luatex",
+        "command": "lualatex",
+        "args": [
+            "--shell-escape",
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "%DOC%"
+        ]
+    },
+    {
+        "name": "latexmk",
+        "command": "latexmk",
+        "args": [
+            "--shell-escape",
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "-pdf",
+            "-outdir=%OUTDIR%",
+            "%DOC%"
+        ]
+    },
+    {
+        "name": "pdflatex",
+        "command": "pdflatex",
+        "args": [
+            "--shell-escape",
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "%DOC%"
+        ]
+    },
+    {
+        "name": "bibtex",
+        "command": "bibtex",
+        "args": [
+            "%DOCFILE%"
+        ]
     }
   ],
   "latex-workshop.synctex.afterBuild.enabled": true,
