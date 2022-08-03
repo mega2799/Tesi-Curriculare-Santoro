@@ -55,6 +55,39 @@ db.B.aggregate([
 ])
 \end{verbatim}
 
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label= Referencing di A in B,labelposition=all]
+{
+  "_id": 21748,
+  "BK": 21748,
+  "AK": 70394,
+  "B1": 85337,
+  "B2": 255,
+  "B3": 6,
+  "B4": 85337,
+  "B5": 255,
+  "B6": 6,
+  "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Fusce lacinia eget arcu et maximus. Ut tempus est sit amet 
+    tortor commodo, sit amet facilisis mi rhoncus. Donec et elit
+    venenatis, consequat tellus eu, tristique orci. Duis 
+    tristique sem ut nulla ullamcorper, a porta risus efficitur.
+    Cras sed neque et nisl tincidunt vestibulum. Phasellus 
+    tristique tempor facilisis. Sed facilisis lectus eros, sed 
+    aliquet lacus elementum sed. Integer vel dictum mi. 
+    Maecenas pharetra tempus eros, efficitur mattis erat cursus
+    in. Nulla sit amet quam velit. Nullam tempus dictum lacus
+    id porttitor. Vestibulum facilisis pulvinar fermentum.
+    Ut elementum maximus feugiat. In at mollis leo, eu 
+    facilisis magna. Vestibulum sed nisi ultricies, tincidunt
+    enim ac, fringilla ex. Phasellus pharetra mollis nisi
+    a fermentum. In nec faucibus nulla, eget molestie magna.
+    Vivamus in gravida ex. Aenean scelerisque gravida 
+    ipsum, nec congue enim posuere sit amet. Donec vitae felis
+    id sem congue blandit eget non justo quis."
+}
+\end{Verbatim}
+
 Il referencing di B in A invece richiede un join, un' operazione piu' onerosa per la quale ho dovuto passare il parametro allowDiskUse=true per poter utilizzare
 a pieno la memoria della macchina e quindi eseguire il join trovando di fatto le chiavi e aggiungendole all'array B che arrivera' a contenere 10 chivi BK per ogni 
 AK dato che il rapporto e' di 1:10. 
@@ -101,6 +134,50 @@ db.B.aggregate(
 )
 \end{verbatim}
 
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label= Referencing di B in A,labelposition=all]
+{
+  "_id": 8518,
+  "AK": 8518,
+  "A1": 6773,
+  "A2": 253,
+  "A3": 4,
+  "A4": 6773,
+  "A5": 253,
+  "A6": 4,
+  "A7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Fusce lacinia eget arcu et maximus. Ut tempus est sit amet 
+    tortor commodo, sit amet facilisis mi rhoncus. Donec et elit
+    venenatis, consequat tellus eu, tristique orci. Duis 
+    tristique sem ut nulla ullamcorper, a porta risus efficitur.
+    Cras sed neque et nisl tincidunt vestibulum. Phasellus 
+    tristique tempor facilisis. Sed facilisis lectus eros, sed 
+    aliquet lacus elementum sed. Integer vel dictum mi. 
+    Maecenas pharetra tempus eros, efficitur mattis erat cursus
+    in. Nulla sit amet quam velit. Nullam tempus dictum lacus
+    id porttitor. Vestibulum facilisis pulvinar fermentum.
+    Ut elementum maximus feugiat. In at mollis leo, eu 
+    facilisis magna. Vestibulum sed nisi ultricies, tincidunt
+    enim ac, fringilla ex. Phasellus pharetra mollis nisi
+    a fermentum. In nec faucibus nulla, eget molestie magna.
+    Vivamus in gravida ex. Aenean scelerisque gravida 
+    ipsum, nec congue enim posuere sit amet. Donec vitae felis
+    id sem congue blandit eget non justo quis.",
+  "B": [
+    182143,
+    450648,
+    120258,
+    151670,
+    314940,
+    281717,
+    335311,
+    802016,
+    313524,
+    537
+  ]
+}
+\end{Verbatim}
+
 \subsubsection{Embedding}
 Per l'embedding di documenti ho dovuto sempre eseguire dei join ma e' stato fondamentale poter aggiungere un intero documento all'interno di un'array tramite il parametro
 \verb|$$ROOT| che ha permesso un operazione molto piu'veloce e compatta.
@@ -146,6 +223,33 @@ db.B.aggregate(
 )    
 \end{verbatim}
 
+
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label= Embedding di B in A,labelposition=all]
+{
+  "_id": 963593,
+  "B1": 77221,
+  "B2": 86,
+  "B3": 1,
+  "B4": 77221,
+  "B5": 86,
+  "B6": 1,
+  "B7": [ ..... ],
+  "A": [
+    {
+      "AK": 70394,
+      "A1": 7960,
+      "A2": 269,
+      "A3": 8,
+      "A4": 7960,
+      "A5": 269,
+      "A6": 8,
+      "A7": [ ..... ]
+    }
+  ]
+}
+\end{Verbatim}
+
 \subsubsection{Embedding di B in A}
 
 \begin{verbatim}
@@ -189,6 +293,56 @@ db.B.aggregate(
 )
 \end{verbatim}
 
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label= Embedding di B in A,labelposition=all]
+{
+  "_id": 48,
+  "AK": 48,
+  "A1": 691,
+  "A2": 154,
+  "A3": 0,
+  "A4": 691,
+  "A5": 154,
+  "A6": 0,
+  "A7": [ ..... ],
+  "B": [
+    {
+      "BK": 844575,
+      "B1": 94813,
+      "B2": 140,
+      "B3": 2,
+      "B4": 94813,
+      "B5": 140,
+      "B6": 2,
+      "B7": [ ..... ]
+    },
+    {
+      "BK": 115006,
+      "B1": 36,
+      "B2": 483,
+      "B3": 8,
+      "B4": 36,
+      "B5": 483,
+      "B6": 8,
+      "B7": [ ..... ]
+    },
+    .
+    .
+    .
+    .
+    {
+      "BK": 834226,
+      "B1": 77768,
+      "B2": 707,
+      "B3": 6,
+      "B4": 77768,
+      "B5": 707,
+      "B6": 6,
+      "B7": [ ..... ]
+    }
+  ]
+}
+\end{Verbatim}
 \subsection{Indici}
 
 Gli indici per gli attributi sono stati creati attraverso uno script in JS che viene eseguito durante la creazione del container.
