@@ -1,8 +1,249 @@
 \chapter{CouchDb}
 
-\section{Raccolta dati}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et ex vehicula, interdum mi eu, auctor augue. Suspendisse vel sagittis urna. In vitae ligula ipsum. Vivamus mattis neque efficitur, gravida purus facilisis, rhoncus felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc bibendum urna porta quam congue ornare. Fusce eget consequat libero. Donec varius justo vel libero malesuada, sit amet dignissim ex tincidunt. In pharetra vestibulum lacus quis laoreet. Donec vel laoreet ex, sed facilisis massa. Mauris commodo velit est. Maecenas non sem elementum, faucibus velit et, bibendum mi. Integer laoreet ex et eros accumsan, nec dapibus nisi vestibulum. Donec sed nunc quis mi gravida congue non vel tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+\section{Caratteristiche}
 
-Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales neque tristique rutrum. Vivamus et ex dolor. Vestibulum lacinia augue sit amet libero mattis pellentesque. In sed congue ante, quis tempus neque. Vestibulum semper eu sapien et vestibulum.
+E' un sistema di gestione di basi di dati non relazionali. E' stato creato soprattutto per il mondo Web, progettato per poter gestire sia importanti quantita' di richieste attraverso
+la rete sia per poter immagazzinare i dati in dispositivi mobili ed essere veloce. Utilizza una HTTP/JSON API per poter gestire le richieste ed inviare i dati, quindi
+fa ampio utilizzo di POST, PUT, DELETE e cosi via. E' diventato un progetto Apache nel 2008, versione OpenSource di CouchServer.
 
-In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
+Per poter eseguire query su CouchDB si utilizza Mango, un linguaggio di interrogazione JSON, molto simile a Mongo ma con alcune differenze, tra le piu'
+importanti c'e' la mancanza dell'operatore di lookup ossia di join, infatti i tempi che presentero' successivamente sulle query di join sono 
+sostanzialmente la somma di query di selezione sulle varie collezioni.
+\section{Popolamento}
+
+Per poter popolare i database contenti i diversi tipi di collezione ho utilizzato le collezioni di documenti precedentemente create attraverso MongoDB e per ogni 
+riga, ossia documento, ho effettuato una post all'indirizzo locale del server di CouchDB.
+
+CouchDB richiede che il campo \verb|_id| sia una stringa, quidni ho utilizzato il comando sed tramite uno script in bash per poter riutilizzare le collezione esportate
+ da MongoDB, dato che non potevo utilizzare il join per generare nuovamente le collezioni.
+
+\begin{Verbatim}
+
+cat dataJSON/embedding_A_in_B.json  | sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/embedding_A_in_B.json
+cat dataJSON/embedding_B_in_A.json |  sed -r 's/"_id":([0-9]+)/ "_id": "\1" /'  >> dataCouchDB/embedding_B_in_A.json
+cat dataJSON/referencing_A_in_B.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/referencing_A_in_B.json
+cat dataJSON/referencing_B_in_A.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/referencing_B_in_A.json
+
+\end{Verbatim}
+
+\begin{Verbatim*}
+import requests
+import json
+
+url = "http://admin:admin@127.0.0.1:5984/b"
+
+payload = json.dumps({
+  "_id": "738878",
+  "BK": 738878,
+  "B1": 94207,
+  "B2": 176,
+  "B3": 3,
+  "B4": 94207,
+  "B5": 176,
+  "B6": 3,
+  "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ........ " 
+})
+headers = {
+  'Accept': 'application/json', 
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
+\end{Verbatim*}
+
+\section{Indici}
+
+Gli indici all'interno di ogni collezione sono stati creati tramite uno script in python con un procedimento simile, per poter ottenere collezioni uguali in tutto e per tutto a 
+quelle di MongoDB. 
+Mango e' un linguaggio di query dichiarativo JSON per CouchDB. Gli indici di Mango con tipo json, sono costruiti usando viste MapReduce.
+
+\begin{Verbatim*}
+import requests
+import json
+import os 
+
+collections_a = [ 'referencing_b_in_a', 'embedding_b_in_a']
+collections_b = ['embedding_a_in_b',  'referencing_a_in_b']
+
+ind_a= ["A4",  "A5", "A6"]
+ind_b= ["B4",  "B5", "B6"]
+
+# A 
+url = "http://admin:admin@127.0.0.1:5984/a/_index?partitioned=true"
+for ind  in ind_a:
+  payload = json.dumps({
+    "index": {
+      "fields": [
+        ind
+      ]
+    },
+    "name": ind + "-index",
+    "type": "json"
+  })
+  headers = {
+    'Content-Type': 'application/json'
+  }
+
+  response = requests.request("POST", url, headers=headers, data=payload)
+
+  print(response.text)
+payload = json.dumps({
+  "index": {
+    "fields": [
+      "AK"
+    ]
+  },
+  "name": "AK" + "-index",
+  "type": "json"
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+response = requests.request("POST", url, headers=headers, data=payload)
+print(response)
+
+# B 
+url = "http://admin:admin@127.0.0.1:5984/b/_index?partitioned=true"
+for ind  in ind_b:
+  payload = json.dumps({
+    "index": {
+      "fields": [
+        ind
+      ]
+    },
+    "name": ind + "-index",
+    "type": "json"
+  })
+  headers = {
+    'Content-Type': 'application/json'
+  }
+
+  response = requests.request("POST", url, headers=headers, data=payload)
+
+  print(response.text)
+payload = json.dumps({
+  "index": {
+    "fields": [
+      "BK"
+    ]
+  },
+  "name": "BK" + "-index",
+  "type": "json"
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+response = requests.request("POST", url, headers=headers, data=payload)
+print(response)
+
+for collection in collections_a:
+    url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
+    for ind  in ind_a:
+        payload = json.dumps({
+          "index": {
+            "fields": [
+              ind
+            ]
+          },
+          "name": ind + "-index",
+          "type": "json"
+        })
+        headers = {
+          'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        print(response.text)
+
+for collection in collections_b:
+    url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
+    for ind  in ind_b:
+        payload = json.dumps({
+          "index": {
+            "fields": [
+              ind
+            ]
+          },
+          "name": ind + "-index",
+          "type": "json"
+        })
+        headers = {
+          'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        print(response.text)
+
+url = "http://admin:admin@127.0.0.1:5984/referencing_a_in_b/_index?partitioned=true"
+payload = json.dumps({
+  "index": {
+    "fields": [
+      "AK"
+    ]
+  },
+  "name": "AK" + "-index",
+  "type": "json"
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+# emb AB
+url = "http://admin:admin@127.0.0.1:5984/embedding_a_in_b/_index?partitioned=true"
+for ind in ind_a:
+  payload = json.dumps({
+    "index": {
+      "fields": [
+        "A." + ind
+      ]
+    },
+    "name": "A." + ind + "-index",
+    "type": "json"
+  })
+  headers = {
+    'Content-Type': 'application/json'
+  }
+  response = requests.request("POST", url, headers=headers, data=payload)
+  print(response.text)
+
+# emb BA
+url = "http://admin:admin@127.0.0.1:5984/embedding_b_in_a/_index?partitioned=true"
+for ind in ind_b:
+  payload = json.dumps({
+    "index": {
+      "fields": [
+        "B." + ind
+      ]
+    },
+    "name": "B." + ind + "-index",
+    "type": "json"
+  })
+  headers = {
+    'Content-Type': 'application/json'
+  }
+  response = requests.request("POST", url, headers=headers, data=payload)
+  print(response.text)
+
+# ref BA
+url = "http://admin:admin@127.0.0.1:5984/referencing_b_in_a/_index?partitioned=true"
+payload = json.dumps({
+  "index": {
+    "fields": [
+      "B"
+    ]
+  },
+  "name": "B" + "-index",
+  "type": "json"
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+response = requests.request("POST", url, headers=headers, data=payload)
+print(response.text)
+\end{Verbatim*}
