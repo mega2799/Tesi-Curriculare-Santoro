@@ -116,6 +116,10 @@
 
 %%% Matematica
 \usepackage{amsmath}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
 % non bisogna assolutamente invocare il pacchetto amssymb
 \usepackage[
  math-style=ISO              % per scrivere la matematica delle scienze sperimentali bisogna seguire le norme ISO
@@ -257,6 +261,7 @@
   \tableofcontents
   
   \input{argoments/Introduzione.tex}
+  \input{argoments/Costi.tex}
   \input{argoments/MongoDb.tex}
   \input{argoments/Oracle.tex}
   \input{argoments/CouchDb.tex}

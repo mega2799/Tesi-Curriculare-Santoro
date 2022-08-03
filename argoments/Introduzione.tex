@@ -7,7 +7,6 @@ Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales
 
 In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
 
-
 \section{Il nostro caso di studio}
 
 Durante la progettazione si e' deciso di utilizzare una relazione per poter testare i diversi metodi di collezione dei dati.
@@ -31,7 +30,72 @@ Poi un attributo testaule di 100 bytes per poter inserire descrizione.
 
 Il numero di Entita' A e' di $10^5$ e di conseguenza ci sono $10^6$ entita' B.
 
-!!!!!!!!!! LE FOTO NON VANNO BENE, LE CHIAVI DEVONO ESSERE SEGNALATE !!!!!!!!!!!!!!!!!!!!!!!!!
+
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label=A (POST),labelposition=all]
+{
+  "_id": 6808,
+  "AK": 6808,
+  "A1": 3042,
+  "A2": 300,
+  "A3": 8,
+  "A4": 3042,
+  "A5": 300,
+  "A6": 8,
+  "A7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Fusce lacinia eget arcu et maximus. Ut tempus est sit amet 
+    tortor commodo, sit amet facilisis mi rhoncus. Donec et elit
+    venenatis, consequat tellus eu, tristique orci. Duis 
+    tristique sem ut nulla ullamcorper, a porta risus efficitur.
+    Cras sed neque et nisl tincidunt vestibulum. Phasellus 
+    tristique tempor facilisis. Sed facilisis lectus eros, sed 
+    aliquet lacus elementum sed. Integer vel dictum mi. 
+    Maecenas pharetra tempus eros, efficitur mattis erat cursus
+    in. Nulla sit amet quam velit. Nullam tempus dictum lacus
+    id porttitor. Vestibulum facilisis pulvinar fermentum.
+    Ut elementum maximus feugiat. In at mollis leo, eu 
+    facilisis magna. Vestibulum sed nisi ultricies, tincidunt
+    enim ac, fringilla ex. Phasellus pharetra mollis nisi
+    a fermentum. In nec faucibus nulla, eget molestie magna.
+    Vivamus in gravida ex. Aenean scelerisque gravida 
+    ipsum, nec congue enim posuere sit amet. Donec vitae felis
+    id sem congue blandit eget non justo quis."
+}
+\end{Verbatim}
+
+\fvset{gobble=2}
+\begin{Verbatim}[frame=single,framesep=2mm,label=B (COMMENTI),labelposition=all]
+{
+  "_id": 73888,
+  "BK": 738878,
+  "F_AK": 70394,
+  "B1": 94207,
+  "B2": 176,
+  "B3": 3,
+  "B4": 94207,
+  "B5": 176,
+  "B6": 3,
+  "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+    Fusce lacinia eget arcu et maximus. Ut tempus est sit amet 
+    tortor commodo, sit amet facilisis mi rhoncus. Donec et elit
+    venenatis, consequat tellus eu, tristique orci. Duis 
+    tristique sem ut nulla ullamcorper, a porta risus efficitur.
+    Cras sed neque et nisl tincidunt vestibulum. Phasellus 
+    tristique tempor facilisis. Sed facilisis lectus eros, sed 
+    aliquet lacus elementum sed. Integer vel dictum mi. 
+    Maecenas pharetra tempus eros, efficitur mattis erat cursus
+    in. Nulla sit amet quam velit. Nullam tempus dictum lacus
+    id porttitor. Vestibulum facilisis pulvinar fermentum.
+    Ut elementum maximus feugiat. In at mollis leo, eu 
+    facilisis magna. Vestibulum sed nisi ultricies, tincidunt
+    enim ac, fringilla ex. Phasellus pharetra mollis nisi
+    a fermentum. In nec faucibus nulla, eget molestie magna.
+    Vivamus in gravida ex. Aenean scelerisque gravida 
+    ipsum, nec congue enim posuere sit amet. Donec vitae felis
+    id sem congue blandit eget non justo quis."
+}
+\end{Verbatim}
+    !!!!!!!!!! LE FOTO NON VANNO BENE, LE CHIAVI DEVONO ESSERE SEGNALATE !!!!!!!!!!!!!!!!!!!!!!!!!
 \begin{center}
     \includegraphics[scale=0.6]{Caso Studio.png}
 \end{center}
