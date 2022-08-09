@@ -47,7 +47,6 @@
 *.ps
 *.eps
 !res/**/*.eps
-*.pdf
 !res/**/*.pdf
 res/**/out/*eps*.pdf
 res/**/out/*converted*.*
@@ -509,3 +508,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/git,tex,osx,code,latex,linux,macos,windows,visualstudiocode
+tesi-frn.pdf

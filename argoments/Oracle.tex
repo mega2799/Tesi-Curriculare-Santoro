@@ -1,8 +1,98 @@
 \chapter{Oracle}
 
+\section{Introduzione}
+
+Oracle e' una societa' che mette a disposizione numerosi prodotti, per la parte di confronto relazionale e' stato usato oracle SQL developer, un software opensource che 
+mette a disposizione un software per poter lavorare con SQL su database di Oracle attraverso il JDK (java development kit).
+
 \section{Raccolta dati}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et ex vehicula, interdum mi eu, auctor augue. Suspendisse vel sagittis urna. In vitae ligula ipsum. Vivamus mattis neque efficitur, gravida purus facilisis, rhoncus felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc bibendum urna porta quam congue ornare. Fusce eget consequat libero. Donec varius justo vel libero malesuada, sit amet dignissim ex tincidunt. In pharetra vestibulum lacus quis laoreet. Donec vel laoreet ex, sed facilisis massa. Mauris commodo velit est. Maecenas non sem elementum, faucibus velit et, bibendum mi. Integer laoreet ex et eros accumsan, nec dapibus nisi vestibulum. Donec sed nunc quis mi gravida congue non vel tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus.
 
-Nullam non pharetra arcu. Donec eget velit elit. Pellentesque sed tortor sodales neque tristique rutrum. Vivamus et ex dolor. Vestibulum lacinia augue sit amet libero mattis pellentesque. In sed congue ante, quis tempus neque. Vestibulum semper eu sapien et vestibulum.
+\section{Organizzazione dei dati}
 
-In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque quam erat, ornare ac justo at, cursus luctus ex. Pellentesque at turpis blandit, elementum ex ac, fringilla nibh. Etiam et tincidunt lacus. Integer mattis mi sit amet faucibus rutrum. Sed at nisi commodo, ultricies purus a, tempus lacus. Mauris accumsan enim nisi, in tempor velit pharetra eu. Sed eu turpis et ante sagittis sodales. Duis a tellus id risus ultricies accumsan. Vestibulum bibendum in sapien sit amet rhoncus. Fusce aliquam, metus vel efficitur pulvinar, nibh lacus ultricies nisl, nec rhoncus elit ligula vitae risus. Mauris bibendum eget erat non rutrum. Curabitur in ligula eget lectus facilisis molestie sed sed neque. Vestibulum eu faucibus augue, a luctus augue. Nam lobortis massa non lorem condimentum vehicula. Aliquam efficitur cursus neque, efficitur placerat libero tincidunt non. Nullam.
+Utilizzando un sistema relazionale ci si e' dovuti limitare alla crezione di due collezioni distinte A (Post) e B(Commenti) sulle quali eseguire le query di selezione per poter
+ottenere una stima dei costi su un modello relazionale che non utlizasse embedding e referencing.
+
+Sono stati creati file .csv dei dati facilmente importabili in un database Oracle creato su un computer fisso, sui quali sono state effettuate alcune operazioni come la creazione di 
+indici per specifici attributi e la limitazione della memoria cache del database locale. 
+
+\begin{Verbatim*}
+
+-- Primary key per A
+
+alter table "SYS"."A" add constraint PK primary key("AK") 
+
+-- Primary key per B
+
+alter table "SYS"."B" add constraint PKB primary key("BK") 
+
+-- Aggiungere il constraint per FAK
+
+ALTER TABLE B
+  ADD CONSTRAINT FK_A_constr FOREIGN KEY (FAK)     
+      REFERENCES A(AK)
+      ON DELETE CASCADE;
+
+-- Indici
+
+CREATE BITMAP INDEX A_A4_BITMAP ON A (A4 ASC);
+CREATE BITMAP INDEX A_A5_BITMAP ON A (A5 ASC);
+CREATE BITMAP INDEX A_A6_BITMAP ON A (A6 ASC);
+CREATE BITMAP INDEX B_B4_BITMAP ON B (B4 ASC);
+CREATE BITMAP INDEX B_B5_BITMAP ON B (B5 ASC);
+CREATE BITMAP INDEX B_B6_BITMAP ON B (B6 ASC);
+CREATE BITMAP INDEX B_FK_BITMAP ON B (FAK ASC);
+
+-- Ridurre la cache del client di sistema
+
+ALTER SYSTEM SET CLIENT_RESULT_CACHE_SIZE = 128M SCOPE=SPFILE;
+ 
+\end{Verbatim*}
+
+Per poter eseguire le query di selezione e' stato utilizzato uno script in python che utilizza il modulo \verb|cx_Oracle| per poter creare una connessione 
+al database locale ed effettuare un numero arbitrario di query, ogni query effettuata riporta un piano di esecuzione visionabile nell'apposito file 
+.sql. Dopo che la connessione viene confermata, si procede a creare 
+un cursore con il quale si andranno ad eseguire query articolate come segue:
+
+\begin{Verbatim*}
+        EXPLAIN PLAN FOR \emph{SELECT * FROM A WHERE A6 = 612};
+        SELECT PLAN_TABLE_OUTPUT FROM TABLE(DBMS_XPLAN.DISPLAY());
+\end{Verbatim*}
+
+Che provvedono ad esegure una query e scrivere una riga all'interno del \verb|PLAN_TABLE_OUTPUT| che poi verra letta e salvata 
+in un file, per poter avere una copia del piano di esecuzione di ciascuna query.
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|}
+    \hline
+        ~ & A & B \\ \hline
+        A0 & 15 & ~ \\ \hline
+        A1 & 47 & ~ \\ \hline
+        A2 & 17 & ~ \\ \hline
+        A3 & 6 & ~ \\ \hline
+        A4 & 4 & ~ \\ \hline
+        A5 & 1 & ~ \\ \hline
+        A6 & 1 & ~ \\ \hline
+        B0 & ~ & 7 \\ \hline
+        B1 & ~ & 295 \\ \hline
+        B2 & ~ & 10 \\ \hline
+        B3 & ~ & 5 \\ \hline
+        B4 & ~ & 3 \\ \hline
+        B5 & ~ & 5 \\ \hline
+        B6 & ~ & 1 \\ \hline
+        A0j & 5 & ~ \\ \hline
+        A1j & 15 & ~ \\ \hline
+        A2j & 3 & ~ \\ \hline
+        A3j & 4 & ~ \\ \hline
+        A4j & 3 & ~ \\ \hline
+        A5j & 2 & ~ \\ \hline
+        A6j & 3 & ~ \\ \hline
+        B0j & ~ & 4 \\ \hline
+        B1j & ~ & 524 \\ \hline
+        B2j & ~ & 10 \\ \hline
+        B3j & ~ & 937 \\ \hline
+        B4j & ~ & 2 \\ \hline
+        B5j & ~ & 5 \\ \hline
+        B6j & ~ & 797 \\ \hline
+    \end{tabular}
+\end{table}

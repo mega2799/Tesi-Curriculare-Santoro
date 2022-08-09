@@ -10,7 +10,7 @@ In ac erat ullamcorper, ultricies dolor sit amet, tempus neque. Pellentesque qua
 \section{Il nostro caso di studio}
 
 Durante la progettazione si e' deciso di utilizzare una relazione per poter testare i diversi metodi di collezione dei dati.
-La relazione e' formata da 2 entita' A e B,in un esempio di un social network l'entita' A sono i Post e l'entita' B i Commenti sotto ogni post, collegate da una relazione 1..N,
+La relazione e' formata da 2 entita' A e B,in un esempio di un social network l'entita' A sono i Post e l'entita' B i Commenti sotto ogni post, collegate da una relazione 1..N -> 1...1,
 per ogni A esistono 10 B relativi, ogni Post contiene 10 Commenti.
 
 La modellazione delle entita' e' stata fatta creando 2 triplette di attributi uguali, sulla seconda tripletta al contrario della prima sono stati costruiti degli indici su ogni attributo,
@@ -26,10 +26,9 @@ questi attributi generici hanno una propria selettivita':
         \qquad 
         \end{equation*}
 
-Poi un attributo testaule di 100 bytes per poter inserire descrizione.
+Poi un attributo testaule, A7, di 100 bytes per poter inserire descrizione.
 
 Il numero di Entita' A e' di $10^5$ e di conseguenza ci sono $10^6$ entita' B.
-
 
 \fvset{gobble=2}
 \begin{Verbatim}[frame=single,framesep=2mm,label=A (POST),labelposition=all]

@@ -11,11 +11,11 @@ importanti c'e' la mancanza dell'operatore di lookup ossia di join, infatti i te
 sostanzialmente la somma di query di selezione sulle varie collezioni.
 \section{Popolamento}
 
-Per poter popolare i database contenti i diversi tipi di collezione ho utilizzato le collezioni di documenti precedentemente create attraverso MongoDB e per ogni 
-riga, ossia documento, ho effettuato una post all'indirizzo locale del server di CouchDB.
+Per poter popolare i database contenti i diversi tipi di collezione si e' utilizzato le collezioni di documenti precedentemente create attraverso MongoDB e per ogni 
+riga, ossia documento, attraverso una post all'indirizzo locale del server di CouchDB si e' potuta eseguire una query.
 
-CouchDB richiede che il campo \verb|_id| sia una stringa, quidni ho utilizzato il comando sed tramite uno script in bash per poter riutilizzare le collezione esportate
- da MongoDB, dato che non potevo utilizzare il join per generare nuovamente le collezioni.
+CouchDB richiede che il campo \verb|_id| sia una stringa, quindi attraverso il comando sed in uno script in bash si e' potuto riutilizzare le collezione esportate
+da MongoDB, dato che il join non e' tra gli operatori di Mango, per generare nuovamente le collezioni.
 
 \begin{Verbatim}
 
@@ -57,7 +57,7 @@ print(response.text)
 
 Gli indici all'interno di ogni collezione sono stati creati tramite uno script in python con un procedimento simile, per poter ottenere collezioni uguali in tutto e per tutto a 
 quelle di MongoDB. 
-Mango e' un linguaggio di query dichiarativo JSON per CouchDB. Gli indici di Mango con tipo json, sono costruiti usando viste MapReduce.
+Mango e' un linguaggio di query dichiarativo JSON per CouchDB. Gli indici di Mango con tipo json, sono costruiti usando viste MapReduce attraverso il seguente script in python:
 
 \begin{Verbatim*}
 import requests
