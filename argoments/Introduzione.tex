@@ -1,5 +1,16 @@
 \chapter{Introduzione}
 
+//TODO la e' non va bene, bisogna usare è
+
+\begin{listing}
+    \begin{minted}{Python}
+        def hello_world():
+            print("Hello floating world!")
+    \end{minted}
+    \caption{Floating listing.}
+    \label{lst:hello}
+\end{listing}
+
 \section{Differenze tra relational/non-relational DB}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et ex vehicula, interdum mi eu, auctor augue. Suspendisse vel sagittis urna. In vitae ligula ipsum. Vivamus mattis neque efficitur, gravida purus facilisis, rhoncus felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc bibendum urna porta quam congue ornare. Fusce eget consequat libero. Donec varius justo vel libero malesuada, sit amet dignissim ex tincidunt. In pharetra vestibulum lacus quis laoreet. Donec vel laoreet ex, sed facilisis massa. Mauris commodo velit est. Maecenas non sem elementum, faucibus velit et, bibendum mi. Integer laoreet ex et eros accumsan, nec dapibus nisi vestibulum. Donec sed nunc quis mi gravida congue non vel tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus.
 
@@ -62,38 +73,70 @@ Il numero di Entita' A e' di $10^5$ e di conseguenza ci sono $10^6$ entita' B.
 }
 \end{Verbatim}
 
-\fvset{gobble=2}
-\begin{Verbatim}[frame=single,framesep=2mm,label=B (COMMENTI),labelposition=all]
-{
-  "_id": 73888,
-  "BK": 738878,
-  "F_AK": 70394,
-  "B1": 94207,
-  "B2": 176,
-  "B3": 3,
-  "B4": 94207,
-  "B5": 176,
-  "B6": 3,
-  "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-    Fusce lacinia eget arcu et maximus. Ut tempus est sit amet 
-    tortor commodo, sit amet facilisis mi rhoncus. Donec et elit
-    venenatis, consequat tellus eu, tristique orci. Duis 
-    tristique sem ut nulla ullamcorper, a porta risus efficitur.
-    Cras sed neque et nisl tincidunt vestibulum. Phasellus 
-    tristique tempor facilisis. Sed facilisis lectus eros, sed 
-    aliquet lacus elementum sed. Integer vel dictum mi. 
-    Maecenas pharetra tempus eros, efficitur mattis erat cursus
-    in. Nulla sit amet quam velit. Nullam tempus dictum lacus
-    id porttitor. Vestibulum facilisis pulvinar fermentum.
-    Ut elementum maximus feugiat. In at mollis leo, eu 
-    facilisis magna. Vestibulum sed nisi ultricies, tincidunt
-    enim ac, fringilla ex. Phasellus pharetra mollis nisi
-    a fermentum. In nec faucibus nulla, eget molestie magna.
-    Vivamus in gravida ex. Aenean scelerisque gravida 
-    ipsum, nec congue enim posuere sit amet. Donec vitae felis
-    id sem congue blandit eget non justo quis."
-}
-\end{Verbatim}
+% \begin{minted}{js}
+% {
+%   "_id": 6808,
+%   "AK": 6808,
+%   "A1": 3042,
+%   "A2": 300,
+%   "A3": 8,
+%   "A4": 3042,
+%   "A5": 300,
+%   "A6": 8,
+%   "A7": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' 
+%     'Fusce lacinia eget arcu et maximus. Ut tempus est sit amet'  
+%     'tortor commodo, sit amet facilisis mi rhoncus. Donec et elit'
+%     'venenatis, consequat tellus eu, tristique orci. Duis'
+%     'tristique sem ut nulla ullamcorper, a porta risus efficitur.'
+%     'Cras sed neque et nisl tincidunt vestibulum. Phasellus' 
+%     'tristique tempor facilisis. Sed facilisis lectus eros, sed' 
+%     'aliquet lacus elementum sed. Integer vel dictum mi.'
+%     'Maecenas pharetra tempus eros, efficitur mattis erat cursus'
+%     'in. Nulla sit amet quam velit. Nullam tempus dictum lacus'
+%     'id porttitor. Vestibulum facilisis pulvinar fermentum.'
+%     'Ut elementum maximus feugiat. In at mollis leo, eu'
+%     'facilisis magna. Vestibulum sed nisi ultricies, tincidunt'
+%     'enim ac, fringilla ex. Phasellus pharetra mollis nisi' 
+%     'a fermentum. In nec faucibus nulla, eget molestie magna.'
+%     'Vivamus in gravida ex. Aenean scelerisque gravida'
+%     'ipsum, nec congue enim posuere sit amet. Donec vitae felis'
+%     'id sem congue blandit eget non justo quis' 
+% }
+% \end{minted}
+% 
+% \begin{minted}[]{js}
+%     
+% {
+%   "_id": 73888,
+%   "BK": 738878,
+%   "F_AK": 70394,
+%   "B1": 94207,
+%   "B2": 176,
+%   "B3": 3,
+%   "B4": 94207,
+%   "B5": 176,
+%   "B6": 3,
+%   "B7": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' 
+%     'Fusce lacinia eget arcu et maximus. Ut tempus est sit amet'  
+%     'tortor commodo, sit amet facilisis mi rhoncus. Donec et elit'
+%     'venenatis, consequat tellus eu, tristique orci. Duis'
+%     'tristique sem ut nulla ullamcorper, a porta risus efficitur.'
+%     'Cras sed neque et nisl tincidunt vestibulum. Phasellus' 
+%     'tristique tempor facilisis. Sed facilisis lectus eros, sed' 
+%     'aliquet lacus elementum sed. Integer vel dictum mi.'
+%     'Maecenas pharetra tempus eros, efficitur mattis erat cursus'
+%     'in. Nulla sit amet quam velit. Nullam tempus dictum lacus'
+%     'id porttitor. Vestibulum facilisis pulvinar fermentum.'
+%     'Ut elementum maximus feugiat. In at mollis leo, eu'
+%     'facilisis magna. Vestibulum sed nisi ultricies, tincidunt'
+%     'enim ac, fringilla ex. Phasellus pharetra mollis nisi' 
+%     'a fermentum. In nec faucibus nulla, eget molestie magna.'
+%     'Vivamus in gravida ex. Aenean scelerisque gravida'
+%     'ipsum, nec congue enim posuere sit amet. Donec vitae felis'
+%     'id sem congue blandit eget non justo quis' 
+% }
+% \end{minted}
+
     !!!!!!!!!! LE FOTO NON VANNO BENE, LE CHIAVI DEVONO ESSERE SEGNALATE !!!!!!!!!!!!!!!!!!!!!!!!!
 \begin{center}
     \includegraphics[scale=0.6]{Caso Studio.png}
@@ -108,6 +151,7 @@ referencing colleghiamo le un entita' inserendo un riferimento della seconda e v
 dell'entita' referenziata c'e' il bisogno di mantenere all'interno del database la collezione contenente i rimanenti attributi. Es. nell'eventuale soluzione del referencing di B all'interno 
 di A, ci sono due collezioni ossia A con la foreign key relativa (BK) relativa a B e l'intera collezione B. 
 
+//TODO cambiare assolutamente queste foto
 \begin{center}
     \includegraphics[scale=0.6]{refAB.png}
 \end{center}
@@ -124,4 +168,188 @@ La soluzione embedding consiste nel creare un'unica collezione di documenti che 
 
 \begin{center}
     \includegraphics[scale=0.6]{embBA.png}
+\end{center}
+
+//TODO section che spiega le operanzioni CRUD
+
+//TODO section che spiega le query  che verranno effettuate sulle collezioni di dati (selezione e update)
+
+\section{Query e operazioni}
+
+Per poter ottenere statistiche da ogni database, sono state decise delle query legate alle operazioni CRUD.
+
+Le prime ad essere eseguite sono state quelle di \textbf{inserimento} di dati, di cui però non si terrà conto in questa tesi dato che i dati sono 
+stati inseriti tramite strumenti come mongoimport per mongoDB o delle semplici richieste HTTP per couchDB e quindi i tempi sono più o meno 
+simili.
+
+//TODO inserire un grafico con i tempi non sarebbe male
+
+Le query di \textbf{lettura} invece sono le query su cui si è lavorato maggiormente, è stata testata la lettura di ogni attributo di entrambe le 
+entità, sia indicizzati che non, escludendo l'attributo di tipo testuale x7 che serve per poter conservare una descrizione del Post o del Commento.
+
+\begin{minted}[]{sql}
+    select A.*
+    from A
+    where Ax='val'
+    
+    
+    select B.*
+    from B
+    where Bx='val' 
+\end{minted}
+
+Data la relazione tra A e B, sono state eseguite poi delle query di selezione di entrambi gli oggetti di una relazione dopo avere eseguito un join 
+sulle chiavi primarie e leggendo un particolare valore degli attributi.
+
+\begin{minted}[]{sql}
+    select A.*, B.*
+    from A join B on (A.AK=B.AK)
+    where Ax='val'
+
+
+    select A.*, B.*
+    from A join B on (A.AK=B.BK)
+    where Bx='val'
+\end{minted}
+
+I valori letti all'interno delle query sono valori randomizzati, ottenuti tramite le cardinalità delle entità, propri per ciascun attributo, in Python con 
+ad esempio la seguente funzioni che prende in entrata l'indice sulla quale cercare e ne restituisce un numero valido.
+
+\begin{minted}[]{python}
+    expA = 5
+
+    expB = 6
+
+    N_A = 10**expA 
+
+    N_B = 10**expB
+
+    N_A1 = N_A/10
+
+    N_A2 = N_A/10**(round(expA/2))
+
+    N_A3 = N_A/10**(expA - 1)
+
+    N_B1 = N_B/10
+
+    N_B2 = N_B/10**(round(expB/2))
+
+    N_B3 = N_B/10**(expB - 1)
+
+     def get_random_indexed_int_A(ind):
+      if "1" in ind or "4" in ind :
+        return randint(0, N_A1 - 1)
+      elif "2" in ind or "5" in ind:
+        return randint(0, N_A2 - 1)
+      elif "3" in ind or "6" in ind:
+        return randint(0, N_A3 - 1)
+
+    def get_random_indexed_int_B(ind):
+      if "1" in ind or "4" in ind :
+        return randint(0, N_B1 - 1)
+      elif "2" in ind or "5" in ind:
+        return randint(0, N_B2 - 1)
+      elif "3" in ind or "6" in ind:
+        return randint(0, N_B3 - 1)   
+\end{minted}
+
+Le query di \textbf{update} sono state strutturate in modo abbastanza simile a quelle di letttura
+
+\begin{minted}[]{sql}
+    update A
+    set Ay = 'val'
+    where Ax='val'
+
+    update B
+    set By = 'v'
+    where Bx='val'
+\end{minted}
+
+//TODO inserire come ho creato i dataset /generazione File 
+
+//TODO valutare se queste section di inserimento sarebbero meglio all interno dei propri capitoli
+
+\section{Risultati inserimento dati}
+
+Dopo la creazione dei dataset delle entità A e B, di diverse dimensioni, sono stati verificati i tempi di inserimento per ogni software utilizzato, 
+ognuno utilizza un differente metodo per la creazione di un documento.
+
+\subsection{MongoDB}
+
+L'applicativo di mongoDB su un sistema Linux contiene già al suo interno gli eseguibili \emph{mongoimport} e \emph{mongoexport} che sono stati ampiamente 
+utilizzati per poter caricare documenti all'interno delle collezioni dati. 
+
+In particolare sono necessarie alcune accortezze rispetto alla normale esecuzione dato che questo progetto ha utilizzato la tecnologia docker, è diventato 
+quindi necessario fornire particolari autorizzazioni, creando quindi il seguente comando 
+
+\begin{minted}[]{bash}
+    mongoimport --collection $COLLECTION --db tirocinio  -u $USERNAME -p $PASSWORD \
+    --host=localhost:27017 --authenticationDatabase admin  /path/to/file.json
+\end{minted}
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionMongoDB.png}
+\end{center}
+
+
+\subsection{CouchDB}
+
+CouchDB utilizza una POST cosi strutturata per inserire un nuovo documento 
+
+\textbf{Request}
+
+\begin{minted}[]{python}
+    POST /db HTTP/1.1
+    Accept: application/json
+    Content-Length: 81
+    Content-Type: application/json
+
+    {
+        "_id": "FishStew",
+        "servings": 4,
+        "subtitle": "Delicious with fresh bread",
+        "title": "Fish Stew"
+    }
+\end{minted}
+
+
+\textbf{Response}
+
+\begin{minted}[]{python}
+    HTTP/1.1 201 Created
+    Cache-Control: must-revalidate
+    Content-Length: 71
+    Content-Type: application/json
+    Date: Tue, 13 Aug 2022 15:19:25 GMT
+    ETag: "1-9c65296036141e575d32ba9c034dd3ee"
+    Location: http://localhost:5984/db/FishStew
+    Server: CouchDB (Erlang/OTP)
+    
+    {
+        "id": "FishStew",
+        "ok": true,
+        "rev": "1-9c65296036141e575d32ba9c034dd3ee"
+    }
+\end{minted}
+
+Quindi è stato scritto uno script in python che itera per ogni documento JSON del dataset ed esegue una POST all'indirizzo del database, specificando che 
+il campo \verb|_id|, che è chiave primaria di ogni documento, corrispondesse alla chiave dell'entità.
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionCouchDB.png}
+\end{center}
+
+Purtroppo è risultato che questo è il metodo di gran lunga meno effeicente, sono stati inseriti un enorme quantità di dati in un volta sola e i tempi sono
+peggiorati molto, c'è però da precisare che la potenza di couchDB e molti altri database non relazionali si basa sui cluster, e nel nostro caso di studio
+ci si è limitati ad una sola instanza, nel caso di multiple instanze le request sarebbero state ripartite sui nodi e i tempi sarebbero stati ridotti di molto.
+
+\subsection{Oracle}
+
+Oracle è un database relazionale, sul quale risulta semplice inserire una tupla all'interno di una tabella attraverso PL/SQL ma nel caso di una quantità
+cospiqua di dati non è piu possibile utilizzare quel metodo che funziona nei piccoli numeri. Il software non riesce a completare quei task cosi ci si è 
+appoggiati alla funzionalità di importazione da file, in particolare si è adattato il dataset ad essere un file di tipo .csv che è stato facilmente 
+inserito all'interno dell'istanza del database.
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionOracle.png}
 \end{center}

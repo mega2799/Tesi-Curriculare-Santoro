@@ -17,41 +17,47 @@ riga, ossia documento, attraverso una post all'indirizzo locale del server di Co
 CouchDB richiede che il campo \verb|_id| sia una stringa, quindi attraverso il comando sed in uno script in bash si e' potuto riutilizzare le collezione esportate
 da MongoDB, dato che il join non e' tra gli operatori di Mango, per generare nuovamente le collezioni.
 
-\begin{Verbatim}
+\begin{minted}[]{vim}
 
-cat dataJSON/embedding_A_in_B.json  | sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/embedding_A_in_B.json
-cat dataJSON/embedding_B_in_A.json |  sed -r 's/"_id":([0-9]+)/ "_id": "\1" /'  >> dataCouchDB/embedding_B_in_A.json
-cat dataJSON/referencing_A_in_B.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/referencing_A_in_B.json
-cat dataJSON/referencing_B_in_A.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' >> dataCouchDB/referencing_B_in_A.json
+    cat dataJSON/embedding_A_in_B.json  | sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' \ 
+    >> dataCouchDB/embedding_A_in_B.json
+    cat dataJSON/embedding_B_in_A.json |  sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' \ 
+    >> dataCouchDB/embedding_B_in_A.json
+    cat dataJSON/referencing_A_in_B.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' \ 
+    >> dataCouchDB/referencing_A_in_B.json
+    cat dataJSON/referencing_B_in_A.json| sed -r 's/"_id":([0-9]+)/ "_id": "\1" /' \ 
+    >> dataCouchDB/referencing_B_in_A.json
 
-\end{Verbatim}
+\end{minted}
 
-\begin{Verbatim*}
-import requests
-import json
+\begin{listing}
+  \begin{minted}{Python}
+    
+  import requests
+  import json
 
-url = "http://admin:admin@127.0.0.1:5984/b"
+  url = "http://admin:admin@127.0.0.1:5984/b"
 
-payload = json.dumps({
-  "_id": "738878",
-  "BK": 738878,
-  "B1": 94207,
-  "B2": 176,
-  "B3": 3,
-  "B4": 94207,
-  "B5": 176,
-  "B6": 3,
-  "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ........ " 
-})
-headers = {
-  'Accept': 'application/json', 
-  'Content-Type': 'application/json'
-}
+  payload = json.dumps({
+    "_id": "738878",
+    "BK": 738878,
+    "B1": 94207,
+    "B2": 176,
+    "B3": 3,
+    "B4": 94207,
+    "B5": 176,
+    "B6": 3,
+    "B7": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ........ " 
+  })
+  headers = {
+    'Accept': 'application/json', 
+    'Content-Type': 'application/json'
+  }
 
-response = requests.request("POST", url, headers=headers, data=payload)
-
-print(response.text)
-\end{Verbatim*}
+  response = requests.request("POST", url, headers=headers, data=payload)
+  \end{minted}
+      \caption{Caricamento di un documento CouchDB}
+\end{listing}
 
 \section{Indici}
 
@@ -59,191 +65,237 @@ Gli indici all'interno di ogni collezione sono stati creati tramite uno script i
 quelle di MongoDB. 
 Mango e' un linguaggio di query dichiarativo JSON per CouchDB. Gli indici di Mango con tipo json, sono costruiti usando viste MapReduce attraverso il seguente script in python:
 
-\begin{Verbatim*}
-import requests
-import json
-import os 
+\begin{minted}[linenos, ]{Python}
+    
+  import requests
+  import json
+  import os 
 
-collections_a = [ 'referencing_b_in_a', 'embedding_b_in_a']
-collections_b = ['embedding_a_in_b',  'referencing_a_in_b']
+  collections_a = [ 'referencing_b_in_a', 'embedding_b_in_a']
+  collections_b = ['embedding_a_in_b',  'referencing_a_in_b']
 
-ind_a= ["A4",  "A5", "A6"]
-ind_b= ["B4",  "B5", "B6"]
+  ind_a= ["A4",  "A5", "A6"]
+  ind_b= ["B4",  "B5", "B6"]
 
-# A 
-url = "http://admin:admin@127.0.0.1:5984/a/_index?partitioned=true"
-for ind  in ind_a:
-  payload = json.dumps({
-    "index": {
-      "fields": [
-        ind
-      ]
-    },
-    "name": ind + "-index",
-    "type": "json"
-  })
+
   headers = {
     'Content-Type': 'application/json'
   }
 
-  response = requests.request("POST", url, headers=headers, data=payload)
+  # A 
+  url = "http://admin:admin@127.0.0.1:5984/a/_index?partitioned=true"
+  for ind  in ind_a:
+    payload = json.dumps({
+      "index": {
+        "fields": [
+          ind
+        ]
+      },
+      "name": ind + "-index",
+      "type": "json"
+    })
+    response = requests.request("POST", url, headers=headers, data=payload)
 
-  print(response.text)
-payload = json.dumps({
-  "index": {
-    "fields": [
-      "AK"
-    ]
-  },
-  "name": "AK" + "-index",
-  "type": "json"
-})
-headers = {
-  'Content-Type': 'application/json'
-}
-response = requests.request("POST", url, headers=headers, data=payload)
-print(response)
-
-# B 
-url = "http://admin:admin@127.0.0.1:5984/b/_index?partitioned=true"
-for ind  in ind_b:
   payload = json.dumps({
     "index": {
       "fields": [
-        ind
+        "AK"
       ]
     },
-    "name": ind + "-index",
+    "name": "AK" + "-index",
     "type": "json"
   })
-  headers = {
-    'Content-Type': 'application/json'
-  }
-
   response = requests.request("POST", url, headers=headers, data=payload)
 
-  print(response.text)
-payload = json.dumps({
-  "index": {
-    "fields": [
-      "BK"
-    ]
-  },
-  "name": "BK" + "-index",
-  "type": "json"
-})
-headers = {
-  'Content-Type': 'application/json'
-}
-response = requests.request("POST", url, headers=headers, data=payload)
-print(response)
+  # B 
+  url = "http://admin:admin@127.0.0.1:5984/b/_index?partitioned=true"
+  for ind  in ind_b:
+    payload = json.dumps({
+      "index": {
+        "fields": [
+          ind
+        ]
+      },
+      "name": ind + "-index",
+      "type": "json"
+    })
+    response = requests.request("POST", url, headers=headers, data=payload)
 
-for collection in collections_a:
-    url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
-    for ind  in ind_a:
-        payload = json.dumps({
-          "index": {
-            "fields": [
-              ind
-            ]
-          },
-          "name": ind + "-index",
-          "type": "json"
-        })
-        headers = {
-          'Content-Type': 'application/json'
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        print(response.text)
-
-for collection in collections_b:
-    url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
-    for ind  in ind_b:
-        payload = json.dumps({
-          "index": {
-            "fields": [
-              ind
-            ]
-          },
-          "name": ind + "-index",
-          "type": "json"
-        })
-        headers = {
-          'Content-Type': 'application/json'
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        print(response.text)
-
-url = "http://admin:admin@127.0.0.1:5984/referencing_a_in_b/_index?partitioned=true"
-payload = json.dumps({
-  "index": {
-    "fields": [
-      "AK"
-    ]
-  },
-  "name": "AK" + "-index",
-  "type": "json"
-})
-headers = {
-  'Content-Type': 'application/json'
-}
-
-response = requests.request("POST", url, headers=headers, data=payload)
-
-# emb AB
-url = "http://admin:admin@127.0.0.1:5984/embedding_a_in_b/_index?partitioned=true"
-for ind in ind_a:
   payload = json.dumps({
     "index": {
       "fields": [
-        "A." + ind
+        "BK"
       ]
     },
-    "name": "A." + ind + "-index",
+    "name": "BK" + "-index",
     "type": "json"
   })
-  headers = {
-    'Content-Type': 'application/json'
-  }
   response = requests.request("POST", url, headers=headers, data=payload)
-  print(response.text)
 
-# emb BA
-url = "http://admin:admin@127.0.0.1:5984/embedding_b_in_a/_index?partitioned=true"
-for ind in ind_b:
+  for collection in collections_a:
+      url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
+      for ind  in ind_a:
+          payload = json.dumps({
+            "index": {
+              "fields": [
+                ind
+              ]
+            },
+            "name": ind + "-index",
+            "type": "json"
+          })
+          response = requests.request("POST", url, headers=headers, data=payload)
+
+  for collection in collections_b:
+      url = "http://admin:admin@127.0.0.1:5984/" + collection + "/_index?partitioned=true"
+      for ind  in ind_b:
+          payload = json.dumps({
+            "index": {
+              "fields": [
+                ind
+              ]
+            },
+            "name": ind + "-index",
+            "type": "json"
+          })
+          response = requests.request("POST", url, headers=headers, data=payload)
+
+  url = "http://admin:admin@127.0.0.1:5984/referencing_a_in_b/_index?partitioned=true"
   payload = json.dumps({
     "index": {
       "fields": [
-        "B." + ind
+        "AK"
       ]
     },
-    "name": "B." + ind + "-index",
+    "name": "AK" + "-index",
     "type": "json"
   })
-  headers = {
-    'Content-Type': 'application/json'
-  }
   response = requests.request("POST", url, headers=headers, data=payload)
-  print(response.text)
 
-# ref BA
-url = "http://admin:admin@127.0.0.1:5984/referencing_b_in_a/_index?partitioned=true"
-payload = json.dumps({
-  "index": {
-    "fields": [
-      "B"
-    ]
-  },
-  "name": "B" + "-index",
-  "type": "json"
-})
-headers = {
-  'Content-Type': 'application/json'
-}
-response = requests.request("POST", url, headers=headers, data=payload)
-print(response.text)
-\end{Verbatim*}
+  # emb AB
+  url = "http://admin:admin@127.0.0.1:5984/embedding_a_in_b/_index?partitioned=true"
+  for ind in ind_a:
+    payload = json.dumps({
+      "index": {
+        "fields": [
+          "A." + ind
+        ]
+      },
+      "name": "A." + ind + "-index",
+      "type": "json"
+    })
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+  # emb BA
+  url = "http://admin:admin@127.0.0.1:5984/embedding_b_in_a/_index?partitioned=true"
+  for ind in ind_b:
+    payload = json.dumps({
+      "index": {
+        "fields": [
+          "B." + ind
+        ]
+      },
+      "name": "B." + ind + "-index",
+      "type": "json"
+    })
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+  # ref BA
+  url = "http://admin:admin@127.0.0.1:5984/referencing_b_in_a/_index?partitioned=true"
+  payload = json.dumps({
+    "index": {
+      "fields": [
+        "B"
+      ]
+    },
+    "name": "B" + "-index",
+    "type": "json"
+  })
+  response = requests.request("POST", url, headers=headers, data=payload)
+  \end{minted}
+  
+
+\section{Container}
+
+Per poter utilizzare CouchDB, come per MongoDB, e' stato deciso di adoperare un container docker nel quale poter muovere comodamente i dati e organizzare un interfaccia
+sulla quale poter lavorare. 
+
+Tramite uno script la memoria e' stata limitata e tramite un interfaccia web-based chiamata Project Fauxton, è stato possibile interagire con le collezioni di 
+dati per poter testare query e amministrare generalmente il database.
+
+//TODO inserire la foto delle collezioni con indici e A,B
+% \begin{center}
+%   \includegraphics{}
+% \end{center}
+
+\begin{minted}[]{vim}
+    version: '3'
+    services:
+      couchserver:
+        container_name: CouchDbServerMega
+        image: couchdb:latest
+        restart: always
+        ports:
+          - "5984:5984"
+        mem_limit: 512m
+        cpu_count: 4
+        environment:
+          - COUCHDB_USER=admin
+          - COUCHDB_PASSWORD=admin
+        volumes:
+            - ./dbdata:/opt/couchdb/data
+\end{minted}
+
+\section{Risultati}
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+        ~ & embedding\_A\_in\_B & embedding\_B\_in\_A & referencing\_A\_in\_B & referencing\_B\_in\_A \\ \hline
+        A1 & 75189.332 & 34471.335 & 140895.697 & 51247.2 \\ \hline
+        A2 & 8349.807 & 7989.056 & 15699.93 & 9581.866 \\ \hline
+        A3 & 101.425 & 98.243 & 181.265 & 115.518 \\ \hline
+        A4 & 71597.284 & 31.813 & 82.354 & 51.148 \\ \hline
+        A5 & 8631.563 & 54.654 & 128.021 & 134.083 \\ \hline
+        A6 & 110.197 & 62.023 & 144.409 & 72.947 \\ \hline
+        B1 & 285188.803 & 28669.218 & 527133.738 & 343064.969 \\ \hline
+        B2 & 6998.93 & 532.826 & 14976.854 & 9221.521 \\ \hline
+        B3 & 91.907 & 14.276 & 147.44 & 119.905 \\ \hline
+        B4 & 39.654 & 30737.048 & 73.722 & 56.231 \\ \hline
+        B5 & 62.485 & 494.581 & 105.319 & 83.123 \\ \hline
+        B6 & 57.733 & 16.16 & 123.626 & 122.586 \\ \hline
+        A1j & 71474.39 & 28136.817 & 63191.924 & 48265.973 \\ \hline
+        A2j & 8346.599 & 7764.238 & 19266.786 & 9213.109 \\ \hline
+        A3j & 106.766 & 103.708 & 3447.027 & 269.924 \\ \hline
+        A4j & 82670.276 & 18.806 & 1084.652 & 83.669 \\ \hline
+        A5j & 8500.238 & 48.353 & 2927.926 & 213.943 \\ \hline
+        A6j & 99.526 & 61.878 & 2840.764 & 160.212 \\ \hline
+        B1j & 262027.396 & 27951.846 & 481069.029 & 313197.745 \\ \hline
+        B2j & 6980.902 & 526.624 & 17093.095 & 9438.85 \\ \hline
+        B3j & 89.303 & 15.736 & 381.211 & 288.027 \\ \hline
+        B4j & 27.341 & 28554.843 & 117.376 & 95.116 \\ \hline
+        B5j & 56.489 & 529.836 & 280.386 & 281.755 \\ \hline
+        B6j & 49.414 & 13.703 & 284.724 & 223.645 \\ \hline
+    \end{tabular}
+\end{table}
+
+//TODO update per couchDB
+% ROBA PER UPDATE
+%PUT /recipes/SpaghettiWithMeatballs HTTP/1.1
+%Accept: application/json
+%Content-Length: 258
+%Content-Type: application/json
+%Host: localhost:5984
+%
+%{
+%    "_rev": "1-917fa2381192822767f010b95b45325b",
+%    "description": "An Italian-American dish that usually consists of spaghetti, tomato sauce and meatballs.",
+%    "ingredients": [
+%        "spaghetti",
+%        "tomato sauce",
+%        "meatballs"
+%    ],
+%    "name": "Spaghetti with meatballs",
+%    "serving": "hot"
+%}

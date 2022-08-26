@@ -12,6 +12,7 @@
 % arara: lualatex: {shell: true}
 
 
+
 \documentclass[%
   a4paper,                % formato di pagina A4
   12pt,                   % corpo del testo a 12pt
@@ -24,6 +25,7 @@
   % leqno,                % mette la numerazione delle formule a sinistra anziché a destra
   final                   % (draft|final) scelta tra bozza o finale, influenza il comportamento degli altri pacchetti
 ]{scrbook}
+
 
 \usepackage{fancyvrb}       % fornisce l'ambiente VerbatimOut e modifica listati di codice
 \usepackage{listings}
@@ -98,7 +100,13 @@
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-% \usepackage{minted}       % evidenzia la sintassi dei listati di codice; richiede pygments installato e shell-escape
+\usepackage{minted}       % evidenzia la sintassi dei listati di codice; richiede pygments installato e shell-escape
+%\usemintedstyle{borland}
+% \usemintedstyle{vim}
+
+% \usepackage[chapter]{minted}
+
+
 %% Font 
 % non è necessario \usepackage[utf8]{inputenc} perché luaLaTeX accetta solo UTF-8
 \usepackage{fontspec}
