@@ -47,6 +47,24 @@ indici per specifici attributi e la limitazione della memoria cache del database
  
 \end{minted}
 
+
+\section{Inserimento (CRUD: Creation)}
+
+
+Oracle è un database relazionale, sul quale risulta semplice inserire una tupla all'interno di una tabella attraverso PL/SQL ma nel caso di una quantità
+cospiqua di dati non è piu possibile utilizzare quel metodo che funziona nei piccoli numeri. Il software non riesce a completare quei task cosi ci si è 
+appoggiati alla funzionalità di importazione da file, in particolare si è adattato il dataset ad essere un file di tipo .csv che è stato facilmente 
+inserito all'interno dell'istanza del database.
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionOracle.png}
+\end{center}
+
+//TODO server section
+
+
+\section{Selezione (CRUD: Read)}
+
 Per poter eseguire le query di selezione e' stato utilizzato uno script in python che utilizza il modulo \verb|cx_Oracle| per poter creare una connessione 
 al database locale ed effettuare un numero arbitrario di query, ogni query effettuata riporta un piano di esecuzione visionabile nell'apposito file 
 .sql. Dopo che la connessione viene confermata, si procede a creare 
@@ -95,3 +113,8 @@ in un file, per poter avere una copia del piano di esecuzione di ciascuna query.
         B6j & ~ & 797 \\ \hline
     \end{tabular}
 \end{table}
+
+
+\section{Aggiornamento (CRUD: Update)}
+
+Le query di aggiornamento dei dati hanno prodotto i seguenti risultati 

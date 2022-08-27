@@ -178,9 +178,10 @@ La soluzione embedding consiste nel creare un'unica collezione di documenti che 
 
 Per poter ottenere statistiche da ogni database, sono state decise delle query legate alle operazioni CRUD.
 
-Le prime ad essere eseguite sono state quelle di \textbf{inserimento} di dati, di cui però non si terrà conto in questa tesi dato che i dati sono 
-stati inseriti tramite strumenti come mongoimport per mongoDB o delle semplici richieste HTTP per couchDB e quindi i tempi sono più o meno 
-simili.
+Le prime ad essere eseguite sono state quelle di \textbf{inserimento} di dati, i cui risultati si trovano rispettivamente nelle sezioni
+\begin{itemize}
+    \item \hyperref[sec:InsertMongo]{Insertimento per MongoDB}
+\end{itemize} 
 
 //TODO inserire un grafico con i tempi non sarebbe male
 
@@ -269,87 +270,7 @@ Le query di \textbf{update} sono state strutturate in modo abbastanza simile a q
 
 //TODO valutare se queste section di inserimento sarebbero meglio all interno dei propri capitoli
 
-\section{Risultati inserimento dati}
-
-Dopo la creazione dei dataset delle entità A e B, di diverse dimensioni, sono stati verificati i tempi di inserimento per ogni software utilizzato, 
-ognuno utilizza un differente metodo per la creazione di un documento.
-
-\subsection{MongoDB}
-
-L'applicativo di mongoDB su un sistema Linux contiene già al suo interno gli eseguibili \emph{mongoimport} e \emph{mongoexport} che sono stati ampiamente 
-utilizzati per poter caricare documenti all'interno delle collezioni dati. 
-
-In particolare sono necessarie alcune accortezze rispetto alla normale esecuzione dato che questo progetto ha utilizzato la tecnologia docker, è diventato 
-quindi necessario fornire particolari autorizzazioni, creando quindi il seguente comando 
-
-\begin{minted}[]{bash}
-    mongoimport --collection $COLLECTION --db tirocinio  -u $USERNAME -p $PASSWORD \
-    --host=localhost:27017 --authenticationDatabase admin  /path/to/file.json
-\end{minted}
-
-\begin{center}
-    \includegraphics[scale=0.8]{InsertionMongoDB.png}
-\end{center}
-
-
-\subsection{CouchDB}
-
-CouchDB utilizza una POST cosi strutturata per inserire un nuovo documento 
-
-\textbf{Request}
-
-\begin{minted}[]{python}
-    POST /db HTTP/1.1
-    Accept: application/json
-    Content-Length: 81
-    Content-Type: application/json
-
-    {
-        "_id": "FishStew",
-        "servings": 4,
-        "subtitle": "Delicious with fresh bread",
-        "title": "Fish Stew"
-    }
-\end{minted}
-
-
-\textbf{Response}
-
-\begin{minted}[]{python}
-    HTTP/1.1 201 Created
-    Cache-Control: must-revalidate
-    Content-Length: 71
-    Content-Type: application/json
-    Date: Tue, 13 Aug 2022 15:19:25 GMT
-    ETag: "1-9c65296036141e575d32ba9c034dd3ee"
-    Location: http://localhost:5984/db/FishStew
-    Server: CouchDB (Erlang/OTP)
-    
-    {
-        "id": "FishStew",
-        "ok": true,
-        "rev": "1-9c65296036141e575d32ba9c034dd3ee"
-    }
-\end{minted}
-
-Quindi è stato scritto uno script in python che itera per ogni documento JSON del dataset ed esegue una POST all'indirizzo del database, specificando che 
-il campo \verb|_id|, che è chiave primaria di ogni documento, corrispondesse alla chiave dell'entità.
-
-\begin{center}
-    \includegraphics[scale=0.8]{InsertionCouchDB.png}
-\end{center}
-
-Purtroppo è risultato che questo è il metodo di gran lunga meno effeicente, sono stati inseriti un enorme quantità di dati in un volta sola e i tempi sono
-peggiorati molto, c'è però da precisare che la potenza di couchDB e molti altri database non relazionali si basa sui cluster, e nel nostro caso di studio
-ci si è limitati ad una sola instanza, nel caso di multiple instanze le request sarebbero state ripartite sui nodi e i tempi sarebbero stati ridotti di molto.
-
-\subsection{Oracle}
-
-Oracle è un database relazionale, sul quale risulta semplice inserire una tupla all'interno di una tabella attraverso PL/SQL ma nel caso di una quantità
-cospiqua di dati non è piu possibile utilizzare quel metodo che funziona nei piccoli numeri. Il software non riesce a completare quei task cosi ci si è 
-appoggiati alla funzionalità di importazione da file, in particolare si è adattato il dataset ad essere un file di tipo .csv che è stato facilmente 
-inserito all'interno dell'istanza del database.
-
-\begin{center}
-    \includegraphics[scale=0.8]{InsertionOracle.png}
-\end{center}
+% \section{Risultati inserimento dati}
+% 
+% Dopo la creazione dei dataset delle entità A e B, di diverse dimensioni, sono stati verificati i tempi di inserimento per ogni software utilizzato, 
+% ognuno utilizza un differente metodo per la creazione di un documento.

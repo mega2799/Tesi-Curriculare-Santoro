@@ -410,11 +410,33 @@ indicizzati anche gli attributi dei documenti "innestati" sui quali saranno eseg
 % \end{lstlisting}
 
 % \lstinputlisting[caption=making indexes, style=customJs]
+
+
 \section{Container}
 
-//TODO 
+//TODO
 
-\section{Risultati}
+\section{Inserimento (CRUD: Creation)}
+\label[]{sec:InsertMongo}
+
+
+L'applicativo di mongoDB su un sistema Linux contiene già al suo interno gli eseguibili \emph{mongoimport} e \emph{mongoexport} che sono stati ampiamente 
+utilizzati per poter caricare documenti all'interno delle collezioni dati. 
+
+In particolare sono necessarie alcune accortezze rispetto alla normale esecuzione dato che questo progetto ha utilizzato la tecnologia docker, è diventato 
+quindi necessario fornire particolari autorizzazioni, creando quindi il seguente comando 
+
+\begin{minted}[]{bash}
+    mongoimport --collection $COLLECTION --db tirocinio  -u $USERNAME -p $PASSWORD \
+    --host=localhost:27017 --authenticationDatabase admin  /path/to/file.json
+\end{minted}
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionMongoDB.png}
+\end{center}
+
+
+\section{Selezione (CRUD: Read)}
 
 \begin{table}[!ht]
     \centering
@@ -451,3 +473,66 @@ indicizzati anche gli attributi dei documenti "innestati" sui quali saranno eseg
         B6j & 1215.4 & 2894.6 & 10936 & 3041.2 \\ \hline
     \end{tabular}
 \end{table}
+
+
+\section{Aggiornamento (CRUD: Update)}
+
+I documenti sono stati aggiornati usando come parametro di ricerca e quindi di selettività gli attributi di ogni collezione, ad esempio la query che 
+trova documenti, all'interno della collezione embedding di B in A, che soddisfano la richiesta di un particolare valore per l'attributo A5/A2 
+modificherà 100 documenti, con una funzione che utlizza pymongo
+
+\begin{minted}[]{python}
+    myclient = pymongo.MongoClient("mongodb://user:password@localhost:27017/")
+    mydb = myclient["tirocinio"]
+    res = mydb.command(
+        'explain', 
+        {
+            'update': 'embedding_B_in_A'
+            'updates' : [
+              {'q' : {"A5": 56},
+              'u' : {'$set' : {"A7": "modified document"
+              }}}]
+        }, 
+        verbosity='executionStats'
+    )
+    if "stages" in list(res.keys()):
+        time = (res["stages"][0]["$cursor"]["executionStats"]["executionTimeMillis"])
+    else:
+        time = (res["executionStats"]["executionTimeMillis"])
+    # Updated failed
+    if res["executionStats"] == False:
+        print(collection, ind)
+        exit(0)
+    return time 
+\end{minted}
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+        ~ & ~ & ~ & ~ & ~ \\ \hline
+        ~ & embedding\_B\_in\_A & referencing\_B\_in\_A & ~ & ~ \\ \hline
+        B0 & 131 & 0 & ~ & ~ \\ \hline
+        B1 & 53 & 3 & ~ & ~ \\ \hline
+        B2 & 1 & 0 & ~ & ~ \\ \hline
+        B3 & 0 & 0 & ~ & ~ \\ \hline
+        B4 & 10 & 8 & ~ & ~ \\ \hline
+        B5 & 3 & 0 & ~ & ~ \\ \hline
+        B6 & 3 & 0 & ~ & ~ \\ \hline
+        ~ & ~ & ~ & ~ & ~ \\ \hline
+        ~ & embedding\_A\_in\_B & referencing\_B\_in\_A & ~ & ~ \\ \hline
+        A0 & 1492 & 0 & ~ & ~ \\ \hline
+        A1 & 196 & 6 & ~ & ~ \\ \hline
+        A2 & 15 & 0 & ~ & ~ \\ \hline
+        A3 & 0 & 0 & ~ & ~ \\ \hline
+        A4 & 3 & 2 & ~ & ~ \\ \hline
+        A5 & 3 & 1 & ~ & ~ \\ \hline
+        A6 & 2 & 0 & ~ & ~ \\ \hline
+    \end{tabular}
+    \label{upd:mongo}
+\end{table}
+
+Da queste due tabelle possiamo mettere a confronto l'operazione di update sugli stessi documenti sia in forma embbeded che normale e tramite un grafico 
+è evidente quanto la modalità embbeded sia maggiormente onerosa nel caso in cui gli attributi non siano indicizzati mentre si hanno risultati pressochè
+identici se la ricerca viene effettuata con un indice.
+

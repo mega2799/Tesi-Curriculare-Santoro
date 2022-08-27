@@ -246,7 +246,62 @@ dati per poter testare query e amministrare generalmente il database.
             - ./dbdata:/opt/couchdb/data
 \end{minted}
 
-\section{Risultati}
+
+\section{Inserimento (CRUD: Creation)}
+
+
+CouchDB utilizza una POST cosi strutturata per inserire un nuovo documento 
+
+\textbf{Request}
+
+\begin{minted}[]{python}
+    POST /db HTTP/1.1
+    Accept: application/json
+    Content-Length: 81
+    Content-Type: application/json
+
+    {
+        "_id": "FishStew",
+        "servings": 4,
+        "subtitle": "Delicious with fresh bread",
+        "title": "Fish Stew"
+    }
+\end{minted}
+
+
+\textbf{Response}
+
+\begin{minted}[]{python}
+    HTTP/1.1 201 Created
+    Cache-Control: must-revalidate
+    Content-Length: 71
+    Content-Type: application/json
+    Date: Tue, 13 Aug 2022 15:19:25 GMT
+    ETag: "1-9c65296036141e575d32ba9c034dd3ee"
+    Location: http://localhost:5984/db/FishStew
+    Server: CouchDB (Erlang/OTP)
+    
+    {
+        "id": "FishStew",
+        "ok": true,
+        "rev": "1-9c65296036141e575d32ba9c034dd3ee"
+    }
+\end{minted}
+
+Quindi è stato scritto uno script in python che itera per ogni documento JSON del dataset ed esegue una POST all'indirizzo del database, specificando che 
+il campo \verb|_id|, che è chiave primaria di ogni documento, corrispondesse alla chiave dell'entità.
+
+\begin{center}
+    \includegraphics[scale=0.8]{InsertionCouchDB.png}
+\end{center}
+
+
+
+Purtroppo è risultato che questo è il metodo di gran lunga meno effeicente, sono stati inseriti un enorme quantità di dati in un volta sola e i tempi sono
+peggiorati molto, c'è però da precisare che la potenza di couchDB e molti altri database non relazionali si basa sui cluster, e nel nostro caso di studio
+ci si è limitati ad una sola instanza, nel caso di multiple instanze le request sarebbero state ripartite sui nodi e i tempi sarebbero stati ridotti di molto.
+
+\section{Selezione (CRUD: Read)}
 
 \begin{table}[!ht]
     \centering
@@ -280,22 +335,51 @@ dati per poter testare query e amministrare generalmente il database.
     \end{tabular}
 \end{table}
 
-//TODO update per couchDB
-% ROBA PER UPDATE
-%PUT /recipes/SpaghettiWithMeatballs HTTP/1.1
-%Accept: application/json
-%Content-Length: 258
-%Content-Type: application/json
-%Host: localhost:5984
-%
-%{
-%    "_rev": "1-917fa2381192822767f010b95b45325b",
-%    "description": "An Italian-American dish that usually consists of spaghetti, tomato sauce and meatballs.",
-%    "ingredients": [
-%        "spaghetti",
-%        "tomato sauce",
-%        "meatballs"
-%    ],
-%    "name": "Spaghetti with meatballs",
-%    "serving": "hot"
-%}
+
+\section{Aggiornamento (CRUD: Update)}
+
+I documenti sono stati aggiornati usando come parametro di ricerca e quindi di selettività gli attributi di ogni collezione, ad esempio la query che 
+trova documenti, all'interno della collezione embedding di B in A, che soddisfano la richiesta di un particolare valore per l'attributo A5/A2 
+modificherà 100 documenti, utilizzando una PUT come segue 
+
+\textbf{Request}
+\begin{minted}[]{python}
+  PUT /recipes/SpaghettiWithMeatballs HTTP/1.1
+  Accept: application/json
+  Content-Length: 258
+  Content-Type: application/json
+  Host: localhost:5984
+
+  {
+      "_rev": "1-917fa2381192822767f010b95b45325b",
+      "description": "An Italian-American dish that usually consists of spaghetti, tomato sauce and meatballs.",
+      "ingredients": [
+          "spaghetti",
+          "tomato sauce",
+          "meatballs"
+      ],
+      "name": "Spaghetti with meatballs",
+      "serving": "hot"
+  }
+\end{minted}
+
+\textbf{Response}
+
+\begin{minted}[]{python}
+  HTTP/1.1 201 Created
+  Cache-Control: must-revalidate
+  Content-Length: 85
+  Content-Type: application/json
+  Date: Wed, 14 Aug 2013 20:33:56 GMT
+  ETag: "2-790895a73b63fb91dd863388398483dd"
+  Location: http://localhost:5984/recipes/SpaghettiWithMeatballs
+  Server: CouchDB (Erlang/OTP)
+
+  {
+      "id": "SpaghettiWithMeatballs",
+      "ok": true,
+      "rev": "2-790895a73b63fb91dd863388398483dd"
+  }
+\end{minted}
+
+Modificando l'attributo rev (revision) del documento e attestando che tutto è andato bene
